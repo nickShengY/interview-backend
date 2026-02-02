@@ -1,0 +1,284 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String        @id @default(cuid())
+  email            String        @unique
+  emailVerified    DateTime?
+  name             String?
+  image            String?
+  country          String?
+  mbti             String?
+  sign             String?
+  credits          Int           @default(10)
+  plan             Plan          @default(FREE)
+  stripeCustomerId String?       @unique
+  transactions     Transaction[]
+  qa               QA[]
+  accounts         Account[]
+  sessions         Session[]
+  progress         UserProgress?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([email])
+  @@index([stripeCustomerId])
+}
+
+enum Plan {
+  FREE
+  PRO
+  ULTRA
+}
+
+model UserProgress {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStreak     Int      @default(0)
+  longestStreak     Int      @default(0)
+  lastCheckIn       DateTime?
+  totalCheckIns     Int      @default(0)
+  lastRewardWon     DateTime?
+  totalRewardsWon   Int      @default(0)
+  totalQuestionSets Int      @default(0) // Total 5-question sets completed
+  consecutiveLosses Int      @default(0) // Track losing streak for boosted odds
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+  @@index([lastCheckIn])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TxType
+  delta     Int
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
+
+enum TxType {
+  ATS_SCAN
+  COVER_LETTER
+  TECH_Q
+  BEHAV_Q
+  REWARD
+  STRIPE_TOPUP
+  TEXTBOOK_UPLOAD
+  TEXTBOOK_GENERATE_FLASHCARDS
+  TEXTBOOK_GENERATE_QUIZ
+  DAILY_CHECKIN
+  STREAK_BONUS
+}
+
+model QA {
+  id               String            @id @default(cuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind             QAKind
+  question         String            @db.Text
+  answer           String            @db.Text
+  feedback         String?           @db.Text
+  sessionId        String?           // Link to interview session
+  session          InterviewSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  createdAt        DateTime          @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([userId, kind])
+  @@index([sessionId])
+}
+
+model InterviewSession {
+  id             String   @id @default(cuid())
+  userId         String
+  type           QAKind   // TECH or BEHAV
+  totalQuestions Int      @default(5)
+  answeredCount  Int      @default(0)
+  correctCount   Int      @default(0)
+  completed      Boolean  @default(false)
+  rewardGiven    Boolean  @default(false)
+  rewardAmount   Int      @default(0)
+  qa             QA[]
+  createdAt      DateTime @default(now())
+  completedAt    DateTime?
+
+  @@index([userId])
+  @@index([userId, completed])
+  @@index([createdAt])
+}
+
+enum QAKind {
+  TECH
+  BEHAV
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// New models for question deduplication
+model GeneratedQuestion {
+  id          String   @id @default(cuid())
+  userId      String
+  questionType String  // 'TECH' or 'BEHAV'
+  question    String   @db.Text
+  difficulty  String?
+  category    String?
+  industry    String?
+  jobTitle    String?
+  focus       String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, questionType])
+  @@index([userId, createdAt])
+}
+
+// Textbook learning system with spaced repetition
+model Textbook {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?  @db.Text
+  content     String   @db.Text
+  fileName    String?
+  totalPages  Int?
+  chapters    TextbookChapter[]
+  flashcards  Flashcard[]
+  quizzes     Quiz[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastStudied DateTime?
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model TextbookChapter {
+  id          String   @id @default(cuid())
+  textbookId  String
+  textbook    Textbook @relation(fields: [textbookId], references: [id], onDelete: Cascade)
+  title       String
+  content     String   @db.Text
+  orderIndex  Int
+  summary     String?  @db.Text
+  keyPoints   String[] // Array of key concepts
+  createdAt   DateTime @default(now())
+
+  @@index([textbookId])
+  @@index([textbookId, orderIndex])
+}
+
+model Flashcard {
+  id           String   @id @default(cuid())
+  userId       String
+  textbookId   String
+  textbook     Textbook @relation(fields: [textbookId], references: [id], onDelete: Cascade)
+  front        String   @db.Text
+  back         String   @db.Text
+  chunkId      String?  // Group related flashcards (chunking technique)
+  category     String?  // Topic category for interleaving
+  keyTerms     String[] // Key concepts for retrieval practice
+  mnemonics    String?  @db.Text // Memory aids
+  difficulty   Int      @default(0) // 0=new, increases with correct answers
+  nextReview   DateTime // Spaced repetition schedule
+  interval     Int      @default(1) // Days until next review
+  easeFactor   Float    @default(2.5) // SuperMemo algorithm
+  repetitions  Int      @default(0)
+  lastReviewed DateTime?
+  createdAt    DateTime @default(now())
+  reviews      FlashcardReview[]
+
+  @@index([userId, nextReview])
+  @@index([textbookId])
+  @@index([chunkId])
+  @@index([category])
+}
+
+model FlashcardReview {
+  id          String    @id @default(cuid())
+  flashcardId String
+  flashcard   Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  quality     Int       // 0-5 rating (SuperMemo)
+  timeSpent   Int?      // Seconds spent on review
+  reviewedAt  DateTime  @default(now())
+
+  @@index([flashcardId])
+  @@index([reviewedAt])
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  userId      String
+  textbookId  String
+  textbook    Textbook @relation(fields: [textbookId], references: [id], onDelete: Cascade)
+  title       String
+  questions   QuizQuestion[]
+  score       Int?
+  totalQuestions Int
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, textbookId])
+}
+
+model QuizQuestion {
+  id          String   @id @default(cuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question    String   @db.Text
+  options     String[] // JSON array of options
+  correctAnswer String
+  userAnswer  String?
+  explanation String?  @db.Text
+  orderIndex  Int
+
+  @@index([quizId])
+}

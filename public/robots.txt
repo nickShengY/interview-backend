@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /profile
+Disallow: /review
+
+Sitemap: https://yourapp.com/sitemap.xml

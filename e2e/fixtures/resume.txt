@@ -1,0 +1,22 @@
+John Doe
+Email: john.doe@example.com | Phone: (555) 123-4567 | Location: New York, NY
+
+Summary
+Software engineer with 5+ years of experience building scalable web applications.
+
+Skills
+- JavaScript, TypeScript, React, Next.js
+- Node.js, Express, REST APIs
+- PostgreSQL, Prisma
+- AWS (EC2, S3), Docker, CI/CD
+
+Experience
+Senior Software Engineer, Acme Corp (2022–Present)
+- Led migration to Next.js and implemented SSR/ISR.
+- Built ATS-friendly resume analyzer and interview practice tools.
+
+Software Engineer, Beta Inc (2019–2022)
+- Developed React components and Node.js services.
+
+Education
+B.S. in Computer Science, State University
