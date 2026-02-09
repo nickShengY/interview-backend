@@ -33,7 +33,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Load environment from .env (project root) so backend has GOOGLE_API_KEY, etc.
+# Load environment from .env (project root) so backend has OPENROUTER_API_KEY, etc.
 load_dotenv()
 
 # Initialize rate limiter

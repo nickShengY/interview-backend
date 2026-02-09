@@ -84,22 +84,22 @@ const ENV_CONFIG: EnvConfig[] = [
     sensitive: true,
   },
 
-  // AI (Gemini)
+  // AI (OpenRouter)
   {
-    name: 'GOOGLE_API_KEY',
+    name: 'OPENROUTER_API_KEY',
     required: true,
-    description: 'Google Gemini API key',
+    description: 'OpenRouter API key',
     sensitive: true,
   },
   {
-    name: 'GEMINI_SMALL_MODEL',
+    name: 'OPENROUTER_APP_URL',
     required: false,
-    description: 'Gemini model for fast operations (default: gemini-2.5-flash-lite)',
+    description: 'App URL for OpenRouter attribution (HTTP-Referer header)',
   },
   {
-    name: 'GEMINI_BIG_MODEL',
+    name: 'OPENROUTER_APP_NAME',
     required: false,
-    description: 'Gemini model for complex operations (default: gemini-1.5-pro)',
+    description: 'App name for OpenRouter attribution (X-Title header)',
   },
 
   // Stripe (optional - can be disabled)

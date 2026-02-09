@@ -204,30 +204,29 @@ class TestCosine:
 
 
 class TestSemanticSimilarity:
-    """Test AI semantic similarity (mocked)."""
+    """Test semantic similarity (SBERT mocked)."""
 
-    @patch('backend.ats_scoring._gemini_embed')
-    def test_high_similarity(self, mock_gemini):
-        mock_gemini.side_effect = [
+    @patch('backend.ats_scoring._sbert_embed_pair')
+    def test_high_similarity(self, mock_sbert):
+        mock_sbert.return_value = (
             np.array([1.0, 0.0, 0.0]),
             np.array([0.9, 0.1, 0.0])
-        ]
+        )
         score = semantic_similarity("resume", "job description")
         assert score > 80
 
-    @patch('backend.ats_scoring._gemini_embed')
-    def test_low_similarity(self, mock_gemini):
-        mock_gemini.side_effect = [
+    @patch('backend.ats_scoring._sbert_embed_pair')
+    def test_low_similarity(self, mock_sbert):
+        mock_sbert.return_value = (
             np.array([1.0, 0.0, 0.0]),
             np.array([0.0, 1.0, 0.0])
-        ]
+        )
         score = semantic_similarity("resume", "job description")
         assert score < 20
 
-    @patch('backend.ats_scoring._gemini_embed')
-    def test_api_failure_fallback(self, mock_gemini):
-        mock_gemini.side_effect = RuntimeError("API Error")
-        # Should return 0 when both Gemini and SBERT fail
+    @patch('backend.ats_scoring._sbert_embed_pair')
+    def test_api_failure_fallback(self, mock_sbert):
+        mock_sbert.side_effect = RuntimeError("API Error")
         score = semantic_similarity("resume", "job description")
         assert score == 0.0
 

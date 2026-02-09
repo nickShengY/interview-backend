@@ -217,7 +217,10 @@ GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
 
 # Google Gemini AI
-GOOGLE_API_KEY="..."
+OPENROUTER_API_KEY="..."
+# Optional attribution headers
+# OPENROUTER_APP_URL="https://yourdomain.com"
+# OPENROUTER_APP_NAME="Interview Pro"
 
 # Stripe
 STRIPE_SECRET_KEY="sk_test_..."
@@ -232,10 +235,11 @@ NEXT_PUBLIC_ATS_API="http://localhost:8000"
 
 ### Backend (.env)
 ```bash
-GOOGLE_API_KEY="..."
+OPENROUTER_API_KEY="..."
 ALLOWED_ORIGINS="http://localhost:3000"
-GEMINI_SMALL_MODEL="gemini-1.5-flash"  # Optional
-GEMINI_BIG_MODEL="gemini-1.5-pro"      # Optional
+# Optional attribution headers
+# OPENROUTER_APP_URL="https://yourdomain.com"
+# OPENROUTER_APP_NAME="Interview Pro"
 ```
 
 ---

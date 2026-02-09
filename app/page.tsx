@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { FileText, MessageSquare, Users, Sparkles, Zap, Star, TrendingUp, BookOpen, Brain, Target } from "lucide-react"
+import { FileText, MessageSquare, Users, Sparkles, Zap, Star, TrendingUp, BookOpen, Brain, Target, DollarSign, Linkedin, Map, Wrench, Flame, Mail, BarChart3, ClipboardCheck, Building2, Mic } from "lucide-react"
 
 import { FAQSection } from "@/components/faq-section"
 
@@ -284,6 +284,46 @@ export default function HomePage() {
             </ul>
           </CardContent>
         </Card>
+      </section>
+
+      {/* New: Career Advancement Tools */}
+      <section className="space-y-8">
+        <div className="text-center space-y-4">
+          <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm px-3 py-1">New Career Tools</Badge>
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+            Complete Career Advancement Suite
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            From salary negotiation to company research — every tool you need to land your dream job and maximize your offer.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { icon: DollarSign, title: "Salary Negotiation Coach", desc: "AI-powered scripts, market data, and counter-offer strategies to maximize your compensation.", href: "/salary-negotiation", gradient: "from-emerald-500 to-teal-500", bg: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20" },
+            { icon: Linkedin, title: "LinkedIn Optimizer", desc: "Get your profile scored and optimized with keyword analysis, headline rewrites, and content ideas.", href: "/linkedin-optimizer", gradient: "from-blue-500 to-cyan-500", bg: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20" },
+            { icon: Map, title: "Career Roadmap Planner", desc: "Personalized career transition plans with skill gap analysis, certifications, and salary projections.", href: "/career-roadmap", gradient: "from-violet-500 to-indigo-500", bg: "from-violet-50 to-indigo-50 dark:from-violet-900/20 dark:to-indigo-900/20" },
+            { icon: Flame, title: "Daily Interview Challenge", desc: "One question a day with streak tracking, achievement badges, and a 30-day heatmap calendar.", href: "/daily-challenge", gradient: "from-orange-500 to-red-500", bg: "from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20" },
+            { icon: Building2, title: "Company Research Intel", desc: "AI-powered company culture analysis, interview process breakdown, and smart questions to ask.", href: "/career-tools", gradient: "from-amber-500 to-orange-500", bg: "from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20" },
+            { icon: Wrench, title: "Career Toolkit", desc: "STAR Story Bank, Elevator Pitch Generator, Networking Emails, Offer Comparison, and Interview Checklist.", href: "/career-tools", gradient: "from-rose-500 to-pink-500", bg: "from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20" },
+          ].map((tool, i) => {
+            const Icon = tool.icon
+            return (
+              <Link key={i} href={tool.href}>
+                <Card className={`group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-0 bg-gradient-to-br ${tool.bg} overflow-hidden relative h-full`}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/0 group-hover:from-white/10 group-hover:to-white/10 transition-all duration-500" />
+                  <CardHeader className="relative z-10">
+                    <div className={`w-12 h-12 bg-gradient-to-r ${tool.gradient} rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <CardTitle className="text-lg">{tool.title}</CardTitle>
+                    <CardDescription className="text-sm">{tool.desc}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
       </section>
 
       <section className="rounded-3xl p-12 md:p-16 bg-gradient-to-br from-orange-50 to-pink-50 dark:from-orange-900/10 dark:to-pink-900/10 border border-orange-200/60 dark:border-orange-800/40 space-y-8">

@@ -9,7 +9,7 @@ import tempfile
 @pytest.fixture(autouse=True)
 def setup_test_environment():
     """Set up test environment variables."""
-    os.environ.setdefault('GOOGLE_API_KEY', '')
+    os.environ.setdefault('OPENROUTER_API_KEY', '')
     os.environ.setdefault('SBERT_API_URL', '')
     yield
 

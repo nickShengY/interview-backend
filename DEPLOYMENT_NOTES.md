@@ -145,8 +145,10 @@ ORDER BY check_in_date DESC;
 Ensure these are set in `.env`:
 ```env
 # Required for AI features
-GOOGLE_API_KEY=your_gemini_api_key_here
-GEMINI_SMALL_MODEL=gemini-2.5-flash
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+# Optional attribution headers
+# OPENROUTER_APP_URL=https://yourdomain.com
+# OPENROUTER_APP_NAME=Interview Pro
 
 # Database
 DATABASE_URL=your_postgresql_url_here

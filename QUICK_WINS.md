@@ -551,7 +551,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - ALLOWED_ORIGINS=http://localhost:3000
     depends_on:
       postgres:

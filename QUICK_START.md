@@ -45,7 +45,7 @@ postgresql://username:password@ep-cool-morning-123456.us-east-2.aws.neon.tech/ne
 DATABASE_URL="postgresql://[YOUR_NEON_CONNECTION_STRING]"
 
 # Keep all other variables the same:
-GOOGLE_API_KEY="..."
+OPENROUTER_API_KEY="..."
 NEXTAUTH_SECRET="..."
 # etc.
 ```
@@ -147,24 +147,19 @@ To activate question deduplication in your interview endpoints:
 ### File: `app/api/interview/technical/route.ts`
 ```typescript
 import { requireCredits } from '@/lib/requireCredits'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 import { filterDuplicateQuestions, storeGeneratedQuestion } from '@/lib/question-dedup'
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '')
 
 async function handler(req: NextRequest, userId: string) {
   const { industry, title, focus } = await req.json()
   const prompt = `Generate 5 technical interview questions for a ${title} role in the ${industry} industry, focusing on ${focus}. Format each question as a markdown bullet.`
   
-  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_SMALL_MODEL || 'gemini-1.5-flash' })
-  const result = await model.generateContent({ 
-    contents: [{ role: 'user', parts: [{ text: prompt }] }], 
-    generationConfig: { temperature: 0.7 } 
+  const schema = { type: 'object', properties: { questions: { type: 'array', items: { type: 'string' } } }, required: ['questions'] }
+  const result = await generateStructuredOutput<{ questions: string[] }>({
+    prompt,
+    schema,
   })
-  
-  const content = result.response.text()
-  const lines = content.split("\n").filter(l => l.trim())
-  const questions = lines.map(l => l.replace(/^[-*]\s*/, "").trim()).filter(Boolean)
+  const questions = result.questions || []
   
   // NEW: Filter duplicates
   const uniqueQuestions = await filterDuplicateQuestions(userId, 'TECH', questions)

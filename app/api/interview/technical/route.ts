@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCredits } from '@/lib/requireCredits'
-import { GoogleGenAI } from '@google/genai'
-import type { GenerateContentConfig } from '@google/genai'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 
@@ -29,8 +28,8 @@ async function handler(req: NextRequest, _userId: string) {
   void _userId
   try {
     const { industry, title, focus } = await req.json()
-    const key = process.env.GOOGLE_API_KEY
-    if (!key) return NextResponse.json({ error: 'Missing GOOGLE_API_KEY' }, { status: 500 })
+    const key = process.env.OPENROUTER_API_KEY
+    if (!key) return NextResponse.json({ error: 'Missing OPENROUTER_API_KEY' }, { status: 500 })
 
     const questionSchema = z.object({
       id: z.number().int().positive().describe('1-based index of the question'),
@@ -47,25 +46,14 @@ async function handler(req: NextRequest, _userId: string) {
 Generate exactly 5 technical interview questions for a ${title} role in the ${industry} industry, focusing on ${focus}.
 Return JSON only that matches the provided JSON schema. Include reasonable difficulty, category, and brief expected answer for each.`
 
-    const ai = new GoogleGenAI({ apiKey: key })
-    const model = process.env.GEMINI_SMALL_MODEL || 'gemini-2.5-flash-lite'
-
-    const configWithSchema = {
-      responseMimeType: 'application/json',
-      responseJsonSchema: zodToJsonSchema(responseSchema),
-    } satisfies Record<string, unknown>
-
-    const response = await ai.models.generateContent({
-      model,
-      contents: prompt,
-      config: configWithSchema as unknown as GenerateContentConfig,
-    })
-    const rawText = response.text ?? ''
     let payload: unknown
     try {
-      payload = JSON.parse(rawText)
-    } catch {
-      return NextResponse.json({ error: 'Model returned non-JSON response' }, { status: 500 })
+      payload = await generateStructuredOutput<z.infer<typeof responseSchema>>({
+        prompt,
+        schema: zodToJsonSchema(responseSchema) as Record<string, unknown>,
+      })
+    } catch (err: unknown) {
+      return NextResponse.json({ error: getErrorMessage(err) || 'Model returned invalid response' }, { status: 500 })
     }
     // Accept either { questions: [...] } or raw array; then normalize
     let rawArr: unknown[] = []

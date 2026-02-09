@@ -282,7 +282,7 @@ pip install -r requirements.txt
 ### Scan fails
 - Check file size (max 10MB)
 - Use PDF, DOCX, DOC, or TXT only
-- Ensure GOOGLE_API_KEY is set in .env
+- Ensure OPENROUTER_API_KEY is set in .env
 
 ## Summary
 

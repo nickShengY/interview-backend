@@ -39,13 +39,10 @@ jest.mock('@/lib/rate-limit', () => ({
   withRateLimit: jest.fn().mockResolvedValue({ success: true }),
 }))
 
-jest.mock('@google/genai', () => ({
-  __esModule: true,
-  GoogleGenAI: jest.fn().mockImplementation(() => ({
-    models: {
-      generateContent: jest.fn().mockResolvedValue({ text: '{"chapters":[]}' }),
-    },
-  })),
+const mockGenerateStructuredOutput = jest.fn().mockResolvedValue({ chapters: [] })
+
+jest.mock('@/lib/llm/openrouter', () => ({
+  generateStructuredOutput: (...args: unknown[]) => mockGenerateStructuredOutput(...args),
 }))
 
 import { POST } from '@/app/api/textbook/upload/route'

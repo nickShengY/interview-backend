@@ -101,8 +101,11 @@ NEXTAUTH_SECRET="your-random-secret-here"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-# Google AI - Get from https://makersuite.google.com/app/apikey
-GOOGLE_API_KEY="your-google-api-key"
+# OpenRouter AI - Get from https://openrouter.ai/keys
+OPENROUTER_API_KEY="your-openrouter-api-key"
+# Optional attribution headers
+# OPENROUTER_APP_URL="https://yourdomain.com"
+# OPENROUTER_APP_NAME="Interview Pro"
 
 # Stripe - Get from https://dashboard.stripe.com/apikeys
 STRIPE_SECRET_KEY="sk_test_..."
@@ -304,7 +307,10 @@ git push origin main
 3. Select your repository
 4. Add environment variables:
 ```
-GOOGLE_API_KEY=...
+OPENROUTER_API_KEY=...
+# Optional attribution headers
+# OPENROUTER_APP_URL=https://your-frontend-url.vercel.app
+# OPENROUTER_APP_NAME=Interview Pro
 ALLOWED_ORIGINS=https://your-frontend-url.vercel.app
 ```
 5. Settings:

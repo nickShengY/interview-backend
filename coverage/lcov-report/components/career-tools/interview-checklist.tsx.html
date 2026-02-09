@@ -1,0 +1,592 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for components/career-tools/interview-checklist.tsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/career-tools</a> interview-checklist.tsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">83.01% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>44/53</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">60% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>12/20</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">83.33% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>15/18</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">90% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>36/40</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">138x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">299x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">299x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">299x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1196x</span>
+<span class="cline-any cline-yes">299x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">299x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client"
+&nbsp;
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { ClipboardCheck, Clock, CheckCircle, Circle, RotateCcw, Briefcase, Laptop, Brain, Shirt, MapPin } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+&nbsp;
+type ChecklistItem = {
+  id: string
+  text: string
+  category: string
+  timeframe: string
+  checked: boolean
+}
+&nbsp;
+const DEFAULT_CHECKLIST: Omit&lt;ChecklistItem, "checked"&gt;[] = [
+  // 1 Week Before
+  { id: "w1", text: "Research the company thoroughly — mission, values, recent news, products", category: "Research", timeframe: "1 Week Before" },
+  { id: "w2", text: "Review the job description and prepare specific examples for each requirement", category: "Preparation", timeframe: "1 Week Before" },
+  { id: "w3", text: "Practice your STAR stories (check your Story Bank!)", category: "Practice", timeframe: "1 Week Before" },
+  { id: "w4", text: "Prepare 5-7 thoughtful questions to ask the interviewer", category: "Preparation", timeframe: "1 Week Before" },
+  { id: "w5", text: "Do a mock interview with a friend or use our AI practice tools", category: "Practice", timeframe: "1 Week Before" },
+  { id: "w6", text: "Update your LinkedIn profile and check your online presence", category: "Branding", timeframe: "1 Week Before" },
+  // 1 Day Before
+  { id: "d1", text: "Confirm interview time, location/link, and interviewer names", category: "Logistics", timeframe: "1 Day Before" },
+  { id: "d2", text: "Plan your outfit — professional, clean, and appropriate for the company culture", category: "Appearance", timeframe: "1 Day Before" },
+  { id: "d3", text: "Print extra copies of your resume (for in-person interviews)", category: "Materials", timeframe: "1 Day Before" },
+  { id: "d4", text: "Test your technology — camera, microphone, internet connection (for virtual)", category: "Tech", timeframe: "1 Day Before" },
+  { id: "d5", text: "Prepare a portfolio or work samples if applicable", category: "Materials", timeframe: "1 Day Before" },
+  { id: "d6", text: "Review your elevator pitch one more time", category: "Practice", timeframe: "1 Day Before" },
+  { id: "d7", text: "Get a good night's sleep — aim for 7-8 hours", category: "Wellness", timeframe: "1 Day Before" },
+  // Morning Of
+  { id: "m1", text: "Eat a healthy breakfast and hydrate", category: "Wellness", timeframe: "Morning Of" },
+  { id: "m2", text: "Do a 5-minute breathing exercise (use our Breathing tool!)", category: "Wellness", timeframe: "Morning Of" },
+  { id: "m3", text: "Review key talking points and your cheat sheet", category: "Preparation", timeframe: "Morning Of" },
+  { id: "m4", text: "Arrive 10-15 minutes early or log in 5 minutes before", category: "Logistics", timeframe: "Morning Of" },
+  { id: "m5", text: "Silence your phone and close unnecessary apps/tabs", category: "Tech", timeframe: "Morning Of" },
+  { id: "m6", text: "Have a glass of water, notepad, and pen ready", category: "Materials", timeframe: "Morning Of" },
+  // After Interview
+  { id: "a1", text: "Send a thank-you email within 24 hours", category: "Follow-up", timeframe: "After Interview" },
+  { id: "a2", text: "Write down questions asked and your answers for future reference", category: "Review", timeframe: "After Interview" },
+  { id: "a3", text: "Connect with interviewer(s) on LinkedIn with a personalized note", category: "Networking", timeframe: "After Interview" },
+  { id: "a4", text: "Reflect on what went well and areas to improve", category: "Review", timeframe: "After Interview" },
+]
+&nbsp;
+const TIMEFRAME_ICONS: Record&lt;string, typeof Clock&gt; = {
+  "1 Week Before": Briefcase,
+  "1 Day Before": Laptop,
+  "Morning Of": Brain,
+  "After Interview": MapPin,
+}
+&nbsp;
+const TIMEFRAME_COLORS: Record&lt;string, string&gt; = {
+  "1 Week Before": "from-blue-500 to-indigo-500",
+  "1 Day Before": "from-violet-500 to-purple-500",
+  "Morning Of": "from-amber-500 to-orange-500",
+  "After Interview": "from-emerald-500 to-teal-500",
+}
+&nbsp;
+function loadChecklist(): ChecklistItem[] {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window === "undefined") <span class="cstat-no" title="statement not covered" >return DEFAULT_CHECKLIST.map(<span class="fstat-no" title="function not covered" >i =&gt; (<span class="cstat-no" title="statement not covered" >{</span> ...i, checked: false }))</span></span>
+  try {
+    const raw = localStorage.getItem("interview_checklist")
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (raw) <span class="cstat-no" title="statement not covered" >return JSON.parse(raw)</span>
+  } catch {}
+  return DEFAULT_CHECKLIST.map(i =&gt; ({ ...i, checked: false }))
+}
+&nbsp;
+function saveChecklist(items: ChecklistItem[]) {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window === "undefined") <span class="cstat-no" title="statement not covered" >return</span>
+  localStorage.setItem("interview_checklist", JSON.stringify(items))
+}
+&nbsp;
+export function InterviewChecklist() {
+  const [items, setItems] = useState&lt;ChecklistItem[]&gt;(DEFAULT_CHECKLIST.map(i =&gt; ({ ...i, checked: false })))
+  const { toast } = useToast()
+&nbsp;
+  useEffect(() =&gt; { setItems(loadChecklist()) }, [])
+&nbsp;
+  const toggleItem = (id: string) =&gt; {
+    const updated = items.map(i =&gt; i.id === id ? { ...i, checked: !i.checked } : i)
+    setItems(updated)
+    saveChecklist(updated)
+  }
+&nbsp;
+  const resetAll = <span class="fstat-no" title="function not covered" >() =&gt; {</span>
+    const reset = <span class="cstat-no" title="statement not covered" >items.map(<span class="fstat-no" title="function not covered" >i =&gt; (<span class="cstat-no" title="statement not covered" >{</span> ...i, checked: false }))</span></span>
+<span class="cstat-no" title="statement not covered" >    setItems(reset)</span>
+<span class="cstat-no" title="statement not covered" >    saveChecklist(reset)</span>
+<span class="cstat-no" title="statement not covered" >    toast({ title: "Checklist Reset", description: "All items have been unchecked." })</span>
+  }
+&nbsp;
+  const checkedCount = items.filter(i =&gt; i.checked).length
+  const progress = Math.round((checkedCount / items.length) * 100)
+  const timeframes = [...new Set(items.map(i =&gt; i.timeframe))]
+&nbsp;
+  return (
+    &lt;div className="space-y-6"&gt;
+      &lt;Card className="border-0 shadow-lg bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-900/10 dark:to-indigo-900/10"&gt;
+        &lt;CardHeader&gt;
+          &lt;div className="flex items-center justify-between"&gt;
+            &lt;div&gt;
+              &lt;CardTitle className="flex items-center gap-2 text-xl"&gt;&lt;ClipboardCheck className="w-5 h-5 text-violet-600" /&gt; Interview Day Checklist&lt;/CardTitle&gt;
+              &lt;CardDescription&gt;{checkedCount}/{items.length} tasks completed&lt;/CardDescription&gt;
+            &lt;/div&gt;
+            &lt;Button onClick={resetAll} variant="outline" size="sm"&gt;&lt;RotateCcw className="w-4 h-4 mr-1" /&gt; Reset&lt;/Button&gt;
+          &lt;/div&gt;
+        &lt;/CardHeader&gt;
+        &lt;CardContent&gt;
+          &lt;Progress value={progress} className="h-3" /&gt;
+          &lt;p className="text-sm text-muted-foreground mt-2"&gt;
+            {progress === 100 ? <span class="branch-0 cbranch-no" title="branch not covered" >"You're fully prepared! Go crush that interview! 🎉" :</span>
+             progress &gt;= 75 ? <span class="branch-0 cbranch-no" title="branch not covered" >"Almost there! Just a few more items." :</span>
+             progress &gt;= 50 ? <span class="branch-0 cbranch-no" title="branch not covered" >"Good progress! Keep going." :</span>
+             "Let's get started on your preparation!"}
+          &lt;/p&gt;
+        &lt;/CardContent&gt;
+      &lt;/Card&gt;
+&nbsp;
+      {timeframes.map(timeframe =&gt; {
+        const tfItems = items.filter(i =&gt; i.timeframe === timeframe)
+        const tfChecked = tfItems.filter(i =&gt; i.checked).length
+        const Icon = TIMEFRAME_ICONS[timeframe] || <span class="branch-1 cbranch-no" title="branch not covered" >Clock</span>
+        const gradient = TIMEFRAME_COLORS[timeframe] || <span class="branch-1 cbranch-no" title="branch not covered" >"from-gray-500 to-gray-600"</span>
+&nbsp;
+        return (
+          &lt;Card key={timeframe} className="overflow-hidden hover:shadow-lg transition-all duration-300"&gt;
+            &lt;div className={`bg-gradient-to-r ${gradient} px-6 py-3 text-white flex items-center justify-between`}&gt;
+              &lt;div className="flex items-center gap-2"&gt;
+                &lt;Icon className="w-5 h-5" /&gt;
+                &lt;h3 className="font-bold"&gt;{timeframe}&lt;/h3&gt;
+              &lt;/div&gt;
+              &lt;Badge className="bg-white/20 text-white"&gt;{tfChecked}/{tfItems.length}&lt;/Badge&gt;
+            &lt;/div&gt;
+            &lt;CardContent className="pt-4"&gt;
+              &lt;div className="space-y-2"&gt;
+                {tfItems.map(item =&gt; (
+                  &lt;button
+                    key={item.id}
+                    onClick={() =&gt; toggleItem(item.id)}
+                    className={`w-full flex items-start gap-3 p-3 rounded-lg border transition-all duration-200 text-left ${
+                      item.checked
+                        ? "bg-muted/30 border-green-200 dark:border-green-800"
+                        : "bg-background border-border hover:bg-muted/20"
+                    }`}
+                  &gt;
+                    {item.checked
+                      ? &lt;CheckCircle className="w-5 h-5 text-green-500 shrink-0 mt-0.5" /&gt;
+                      : &lt;Circle className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" /&gt;
+                    }
+                    &lt;div className="flex-1"&gt;
+                      &lt;span className={`text-sm ${item.checked ? "line-through text-muted-foreground" : "text-foreground"}`}&gt;
+                        {item.text}
+                      &lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;Badge variant="outline" className="text-xs shrink-0"&gt;{item.category}&lt;/Badge&gt;
+                  &lt;/button&gt;
+                ))}
+              &lt;/div&gt;
+            &lt;/CardContent&gt;
+          &lt;/Card&gt;
+        )
+      })}
+    &lt;/div&gt;
+  )
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-02-06T07:42:39.681Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    

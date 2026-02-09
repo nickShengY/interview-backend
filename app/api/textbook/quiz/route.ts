@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireCredits } from '@/lib/requireCredits'
-import { GoogleGenAI } from '@google/genai'
-import type { GenerateContentConfig } from '@google/genai'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 
@@ -42,13 +41,10 @@ async function handler(req: NextRequest, userId: string) {
     }
 
     // Generate quiz using AI
-    const apiKey = process.env.GOOGLE_API_KEY?.trim()
+    const apiKey = process.env.OPENROUTER_API_KEY?.trim()
     if (!apiKey) {
       return NextResponse.json({ error: 'AI service not configured' }, { status: 500 })
     }
-
-    const ai = new GoogleGenAI({ apiKey })
-    const model = process.env.GEMINI_SMALL_MODEL || 'gemini-2.5-flash-lite'
 
     const quizSchema = z.object({
       title: z.string(),
@@ -69,18 +65,10 @@ ${contentPreview}
 
 Return JSON in this format: {"title": "Quiz Title", "questions": [{"question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": "A", "explanation": "..."}]}`
 
-    const configWithSchema = {
-      responseMimeType: 'application/json',
-      responseJsonSchema: zodToJsonSchema(quizSchema),
-    } satisfies Record<string, unknown>
-
-    const response = await ai.models.generateContent({
-      model,
-      contents: prompt,
-      config: configWithSchema as unknown as GenerateContentConfig,
+    const parsed = await generateStructuredOutput<z.infer<typeof quizSchema>>({
+      prompt,
+      schema: zodToJsonSchema(quizSchema) as Record<string, unknown>,
     })
-
-    const parsed = JSON.parse(response.text ?? '{"title":"Quiz","questions":[]}')
     const quizData = parsed
 
     // Create quiz

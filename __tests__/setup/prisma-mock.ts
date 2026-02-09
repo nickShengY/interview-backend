@@ -42,6 +42,7 @@ const createPrismaMock = () => ({
   },
   textbook: {
     findUnique: jest.fn(),
+    findFirst: jest.fn(),
     findMany: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
@@ -58,8 +59,13 @@ const createPrismaMock = () => ({
     create: jest.fn(),
   },
   quiz: {
+    findUnique: jest.fn(),
     findMany: jest.fn(),
     create: jest.fn(),
+  },
+  quizQuestion: {
+    create: jest.fn(),
+    findMany: jest.fn(),
   },
   $queryRaw: jest.fn(),
   $transaction: jest.fn(),

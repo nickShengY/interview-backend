@@ -17,12 +17,10 @@ jest.mock('@/lib/credits', () => ({
   refundCredits: jest.fn(),
 }))
 
-jest.mock('@google/genai', () => ({
-  GoogleGenAI: jest.fn().mockImplementation(() => ({
-    models: {
-      generateContent: jest.fn(),
-    },
-  })),
+const mockGenerateStructuredOutput = jest.fn()
+
+jest.mock('@/lib/llm/openrouter', () => ({
+  generateStructuredOutput: (...args: unknown[]) => mockGenerateStructuredOutput(...args),
 }))
 
 import { POST } from '@/app/api/interview/evaluate/route'
@@ -41,7 +39,7 @@ const createRequest = (body: object) => {
 describe('POST /api/interview/evaluate', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    process.env.GOOGLE_API_KEY = '' // Disable AI for predictable tests
+    process.env.OPENROUTER_API_KEY = '' // Disable AI for predictable tests
   })
 
   describe('Request Validation', () => {

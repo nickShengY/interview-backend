@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { FileText, MessageSquare, Users, History, User, Menu, X, Sparkles, Zap, LogIn, LogOut, BookOpen } from "lucide-react"
+import { FileText, MessageSquare, Users, History, User, Menu, X, Sparkles, Zap, LogIn, LogOut, BookOpen, DollarSign, Linkedin, Map, Wrench, Flame, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navigation = [
@@ -31,7 +31,20 @@ const navigation = [
     href: "/textbook-learning",
     icon: BookOpen,
   },
-  { name: "Review", shortName: "Review", href: "/review", icon: History },
+  {
+    name: "Daily Challenge",
+    shortName: "Daily",
+    href: "/daily-challenge",
+    icon: Flame,
+  },
+]
+
+const moreNavigation = [
+  { name: "Salary Negotiation", href: "/salary-negotiation", icon: DollarSign },
+  { name: "LinkedIn Optimizer", href: "/linkedin-optimizer", icon: Linkedin },
+  { name: "Career Roadmap", href: "/career-roadmap", icon: Map },
+  { name: "Career Toolkit", href: "/career-tools", icon: Wrench },
+  { name: "Review History", href: "/review", icon: History },
 ]
 
 export default function Navigation() {
@@ -101,6 +114,37 @@ export default function Navigation() {
                 </Link>
               )
             })}
+
+            {/* More dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={moreNavigation.some(m => pathname === m.href) ? "brand" : "ghost"}
+                  className={cn(
+                    "flex items-center space-x-1 transition-all duration-300 hover:scale-105",
+                    !moreNavigation.some(m => pathname === m.href) && "text-foreground/80",
+                  )}
+                >
+                  <Wrench className="w-4 h-4" />
+                  <span>More</span>
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                {moreNavigation.map((item) => {
+                  const Icon = item.icon
+                  const isActive = pathname === item.href
+                  return (
+                    <DropdownMenuItem key={item.name} asChild>
+                      <Link href={item.href} className={cn("flex items-center space-x-2 cursor-pointer", isActive && "font-semibold text-primary")}>
+                        <Icon className="w-4 h-4" />
+                        <span>{item.name}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Profile & Theme Toggle */}
@@ -164,7 +208,7 @@ export default function Navigation() {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden py-4 space-y-2 animate-in slide-in-from-top-2 duration-300">
-            {navigation.map((item) => {
+            {[...navigation, ...moreNavigation.map(m => ({ ...m, shortName: m.name }))].map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
               return (

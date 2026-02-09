@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { ensureCredits, refundCredits } from '@/lib/credits'
-import { GoogleGenAI } from '@google/genai'
-import type { GenerateContentConfig } from '@google/genai'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 import { resolveUserId } from '@/lib/firebase/auth-utils'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
@@ -172,7 +171,7 @@ export async function POST(req: NextRequest) {
     await ensureCredits(userId, 1, txType)
     didDebit = true
 
-    const apiKey = process.env.GOOGLE_API_KEY?.trim() || ''
+    const apiKey = process.env.OPENROUTER_API_KEY?.trim() || ''
     let verdict = false
     let usedFallback = false
     let solution: Solution = isBehavioral
@@ -181,9 +180,6 @@ export async function POST(req: NextRequest) {
 
     if (apiKey) {
       try {
-        const ai = new GoogleGenAI({ apiKey })
-        const model = process.env.GEMINI_SMALL_MODEL || 'gemini-2.5-flash-lite'
-
         const techSchema = z.object({
           verdict: z.enum(['correct','incorrect']),
           solution: z.object({
@@ -220,18 +216,10 @@ Question: ${question}
 
 Answer: ${answer}`
 
-        const result = await ai.models.generateContent({
-          model,
-          contents: prompt,
-          config: (
-            {
-              responseMimeType: 'application/json',
-              responseJsonSchema: zodToJsonSchema(schema),
-            } satisfies Record<string, unknown>
-          ) as unknown as GenerateContentConfig,
+        const parsedJson = await generateStructuredOutput<z.infer<typeof schema>>({
+          prompt,
+          schema: zodToJsonSchema(schema) as Record<string, unknown>,
         })
-        const text = result.text ?? ''
-        const parsedJson: unknown = JSON.parse(text)
         const parsed = schema.safeParse(parsedJson)
         if (parsed.success) {
           verdict = parsed.data.verdict === 'correct'
@@ -251,7 +239,8 @@ Answer: ${answer}`
           ? { star: { situation: 'Describe the context', task: 'State the goal', action: 'Explain key actions', result: 'Quantify the outcome' }, improvementTips: ['Use STAR', 'Be specific', 'Quantify results'] }
           : { idealAnswer: 'Outline a correct and concise solution', keyPoints: ['Core concept', 'Key steps', 'Common pitfalls'], improvementTips: ['Address complexity', 'Compare trade-offs'] }
       }
-    } else {
+    }
+ else {
       usedFallback = true
       verdict = heuristicEvaluate(question, answer)
       solution = isBehavioral

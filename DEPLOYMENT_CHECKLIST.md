@@ -245,10 +245,11 @@ FIREBASE_PRIVATE_KEY="<private-key-from-secret-manager>"
 GOOGLE_CLIENT_ID=<prod-oauth-client-id>
 GOOGLE_CLIENT_SECRET=<prod-oauth-secret>
 
-# AI (Gemini)
-GOOGLE_API_KEY=<prod-gemini-api-key>
-GEMINI_SMALL_MODEL=gemini-2.5-flash-lite
-GEMINI_BIG_MODEL=gemini-1.5-pro
+# AI (OpenRouter)
+OPENROUTER_API_KEY=<prod-openrouter-api-key>
+# Optional attribution headers
+# OPENROUTER_APP_URL=https://your-production-domain.com
+# OPENROUTER_APP_NAME=Interview Pro
 
 # Stripe
 STRIPE_SECRET_KEY=sk_live_<live-key>
@@ -268,12 +269,10 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=true
 **Backend (.env):**
 ```bash
 # API Key
-GOOGLE_API_KEY=<prod-gemini-api-key>
-
-# Models
-GEMINI_SMALL_MODEL=gemini-2.5-flash-lite
-GEMINI_BIG_MODEL=gemini-1.5-pro
-GEMINI_EMBED_MODEL=text-embedding-004
+OPENROUTER_API_KEY=<prod-openrouter-api-key>
+# Optional attribution headers
+# OPENROUTER_APP_URL=https://your-production-domain.com
+# OPENROUTER_APP_NAME=Interview Pro
 
 # SBERT (optional)
 SBERT_API_URL=<sbert-service-url>

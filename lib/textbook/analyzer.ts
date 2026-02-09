@@ -1,8 +1,6 @@
-import { GoogleGenAI } from '@google/genai'
-import type { GenerateContentConfig } from '@google/genai'
-import type { GenerateContentParameters } from '@google/genai'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 
 const CHUNK_SIZE = 6000 // Characters per chunk for processing
 const MAX_CHUNKS = 20 // Maximum chunks to process (120k chars total)
@@ -94,52 +92,8 @@ export function splitIntoChunks(content: string, chunkSize = CHUNK_SIZE): string
  * Multi-agent analyzer: Orchestrates multiple specialized AI calls
  */
 export class TextbookAnalyzer {
-  private ai: GoogleGenAI
-  private model: string
-
-  constructor(apiKey: string) {
-    this.ai = new GoogleGenAI({ apiKey })
-    this.model = process.env.GEMINI_SMALL_MODEL || 'gemini-2.5-flash-lite'
-  }
-
-  private async generateContentWithRetry(
-    request: GenerateContentParameters,
-    options?: { maxRetries?: number; initialDelayMs?: number; backoffFactor?: number },
-  ) {
-    const maxRetries = options?.maxRetries ?? 2
-    let delay = options?.initialDelayMs ?? 3000
-    const backoffFactor = options?.backoffFactor ?? 2
-
-    let attempt = 0
-
-    for (;;) {
-      try {
-        return await this.ai.models.generateContent(request)
-      } catch (err: unknown) {
-        const statusRaw = isRecord(err)
-          ? (err.status ?? err.code ?? (isRecord(err.error) ? err.error.status : undefined))
-          : undefined
-        const status = typeof statusRaw === 'number' || typeof statusRaw === 'string'
-          ? Number(statusRaw)
-          : undefined
-        const message = getErrorMessage(err)
-        const is429 =
-          status === 429 ||
-          message.includes('429') ||
-          message.toLowerCase().includes('too many requests')
-
-        if (!is429 || attempt >= maxRetries) {
-          throw err
-        }
-
-        attempt += 1
-        nativeConsole.warn(
-          `Gemini 429 Too Many Requests. Retry ${attempt}/${maxRetries} after ${delay}ms`,
-        )
-        await new Promise((resolve) => setTimeout(resolve, delay))
-        delay = Math.round(delay * backoffFactor)
-      }
-    }
+  private async generateStructured<T>(prompt: string, schema: Record<string, unknown>) {
+    return generateStructuredOutput<T>({ prompt, schema })
   }
 
   /**
@@ -162,49 +116,12 @@ ${preview}
 
 If the content continues beyond this preview, extrapolate likely additional chapters based on the structure.`
 
-    const response = await this.generateContentWithRetry({
-      model: this.model,
-      contents: prompt,
-      config: (
-        {
-          responseMimeType: 'application/json',
-          responseJsonSchema: zodToJsonSchema(ChapterSchema),
-        } satisfies Record<string, unknown>
-      ) as unknown as GenerateContentConfig,
-    })
+    const response = await this.generateStructured<z.infer<typeof ChapterSchema>>(
+      prompt,
+      zodToJsonSchema(ChapterSchema) as Record<string, unknown>,
+    )
 
-    const raw = (response.text || '').trim()
-    if (!raw) {
-      return { chapters: [] }
-    }
-
-    let parsed: unknown
-    try {
-      parsed = JSON.parse(raw) as unknown
-    } catch (err: unknown) {
-      nativeConsole.warn('Failed to parse chapter structure JSON:', err)
-      return { chapters: [] }
-    }
-
-    // Gemini may occasionally return a bare array instead of { chapters: [...] }
-    let normalized: unknown
-    if (Array.isArray(parsed)) {
-      normalized = { chapters: parsed }
-    } else if (isRecord(parsed)) {
-      if (Array.isArray(parsed.chapters)) {
-        normalized = parsed
-      } else if (Array.isArray(parsed.sections)) {
-        // Gracefully accept an alternate property name
-        normalized = { chapters: parsed.sections }
-      } else {
-        // Last resort: treat the whole object as a single chapter-like entry
-        normalized = { chapters: [parsed] }
-      }
-    } else {
-      return { chapters: [] }
-    }
-
-    return ChapterSchema.parse(normalized)
+    return ChapterSchema.parse(response)
   }
 
   /**
@@ -234,46 +151,25 @@ Create flashcards that:
 3. Add mnemonics for complex concepts (acronyms, rhymes, imagery)
 4. Vary difficulty levels`
 
-    const response = await this.generateContentWithRetry({
-      model: this.model,
-      contents: prompt,
-      config: (
-        {
-          responseMimeType: 'application/json',
-          responseJsonSchema: zodToJsonSchema(FlashcardChunkSchema),
-        } satisfies Record<string, unknown>
-      ) as unknown as GenerateContentConfig,
-    })
-
-    const rawText = response.text ?? '{"flashcards":[]}'
-
-    let raw: unknown
+    let response: z.infer<typeof FlashcardChunkSchema>
     try {
-      raw = JSON.parse(rawText) as unknown
+      response = await this.generateStructured<z.infer<typeof FlashcardChunkSchema>>(
+        prompt,
+        zodToJsonSchema(FlashcardChunkSchema) as Record<string, unknown>,
+      )
     } catch (err: unknown) {
-      nativeConsole.warn('Flashcard JSON parse failed for chunk', chunkIndex, err)
-      // Second chance: sometimes the model emits invalid escape sequences.
-      try {
-        const repairedText = rawText.replace(/\\(?!["\\/bfnrtu])/g, '')
-        raw = JSON.parse(repairedText) as unknown
-      } catch (err2: unknown) {
-        nativeConsole.warn('Flashcard JSON repair also failed for chunk', chunkIndex, err2)
-        return { flashcards: [] }
-      }
+      nativeConsole.warn('Flashcard generation failed for chunk', chunkIndex, err)
+      return { flashcards: [] }
     }
 
-    const normalizedForSchema = Array.isArray(raw) ? { flashcards: raw } : raw
-
-    const parsed = FlashcardChunkSchema.safeParse(normalizedForSchema)
+    const parsed = FlashcardChunkSchema.safeParse(response)
     if (parsed.success) {
       return parsed.data
     }
 
     nativeConsole.warn('Flashcard schema validation failed for chunk', chunkIndex, parsed.error.issues)
 
-    // Best-effort recovery: try to coerce whatever structure we received into valid flashcards.
-    // Gemini sometimes returns a bare array instead of { flashcards: [...] }.
-    const source: unknown = normalizedForSchema
+    const source: unknown = response
     const candidates = isRecord(source) && Array.isArray(source.flashcards)
       ? source.flashcards
       : Array.isArray(source)
@@ -397,45 +293,25 @@ Create questions that test:
 3. Application to scenarios
 4. Critical analysis`
 
-    const response = await this.generateContentWithRetry({
-      model: this.model,
-      contents: prompt,
-      config: (
-        {
-          responseMimeType: 'application/json',
-          responseJsonSchema: zodToJsonSchema(QuizChunkSchema),
-        } satisfies Record<string, unknown>
-      ) as unknown as GenerateContentConfig,
-    })
-
-    const rawText = response.text ?? '{"questions":[]}'
-
-    let raw: unknown
+    let response: z.infer<typeof QuizChunkSchema>
     try {
-      raw = JSON.parse(rawText) as unknown
+      response = await this.generateStructured<z.infer<typeof QuizChunkSchema>>(
+        prompt,
+        zodToJsonSchema(QuizChunkSchema) as Record<string, unknown>,
+      )
     } catch (err: unknown) {
-      nativeConsole.warn('Quiz JSON parse failed for chunk', chunkIndex, err)
-      // Second chance: sometimes the model emits invalid escape sequences.
-      try {
-        const repairedText = rawText.replace(/\\(?!["\\/bfnrtu])/g, '')
-        raw = JSON.parse(repairedText) as unknown
-      } catch (err2: unknown) {
-        nativeConsole.warn('Quiz JSON repair also failed for chunk', chunkIndex, err2)
-        return { questions: [] }
-      }
+      nativeConsole.warn('Quiz generation failed for chunk', chunkIndex, err)
+      return { questions: [] }
     }
 
-    const normalizedForSchema = Array.isArray(raw) ? { questions: raw } : raw
-
-    const parsed = QuizChunkSchema.safeParse(normalizedForSchema)
+    const parsed = QuizChunkSchema.safeParse(response)
     if (parsed.success) {
       return parsed.data
     }
 
     nativeConsole.warn('Quiz schema validation failed for chunk', chunkIndex, parsed.error.issues)
 
-    // Best-effort recovery: coerce loosely structured output into valid quiz questions
-    const source: unknown = normalizedForSchema
+    const source: unknown = response
     const candidates = isRecord(source) && Array.isArray(source.questions)
       ? source.questions
       : Array.isArray(source)
@@ -553,18 +429,12 @@ Evaluate:
 4. Provide specific, actionable feedback
 5. Give a model simple explanation they could learn from`
 
-    const response = await this.generateContentWithRetry({
-      model: this.model,
-      contents: prompt,
-      config: (
-        {
-          responseMimeType: 'application/json',
-          responseJsonSchema: zodToJsonSchema(FeynmanEvalSchema),
-        } satisfies Record<string, unknown>
-      ) as unknown as GenerateContentConfig,
-    })
+    const response = await this.generateStructured<z.infer<typeof FeynmanEvalSchema>>(
+      prompt,
+      zodToJsonSchema(FeynmanEvalSchema) as Record<string, unknown>,
+    )
 
-    return FeynmanEvalSchema.parse(JSON.parse(response.text ?? '{}'))
+    return FeynmanEvalSchema.parse(response)
   }
 
   /**
@@ -665,7 +535,7 @@ Evaluate:
  * Create analyzer instance
  */
 export function createAnalyzer(): TextbookAnalyzer | null {
-  const apiKey = process.env.GOOGLE_API_KEY?.trim()
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim()
   if (!apiKey) return null
-  return new TextbookAnalyzer(apiKey)
+  return new TextbookAnalyzer()
 }

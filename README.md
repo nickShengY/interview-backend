@@ -141,10 +141,9 @@ npm run dev
 | `NEXTAUTH_SECRET` | NextAuth.js secret key | ✅ |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID | ✅ |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth secret | ✅ |
-| `GOOGLE_API_KEY` | Google Gemini API key | ✅ |
-| `GEMINI_SMALL_MODEL` | Small model for quick generation (default: `gemini-1.5-flash`) | ❌ |
-| `GEMINI_BIG_MODEL` | Big model for higher quality (default: `gemini-1.5-pro`) | ❌ |
-| `GEMINI_EMBED_MODEL` | Embedding model (default: `text-embedding-004`) | ❌ |
+| `OPENROUTER_API_KEY` | OpenRouter API key | ✅ |
+| `OPENROUTER_APP_URL` | OpenRouter attribution URL (HTTP-Referer header) | ❌ |
+| `OPENROUTER_APP_NAME` | OpenRouter attribution app name (X-Title header) | ❌ |
 | `STRIPE_SECRET_KEY` | Stripe secret key | ✅ |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | ✅ |
 | `STRIPE_PRICE_PRO` | Stripe price ID for Pro plan | ✅ |

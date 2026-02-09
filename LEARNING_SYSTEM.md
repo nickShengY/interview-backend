@@ -270,8 +270,10 @@ npx prisma generate
 
 ### 2. Environment Variables
 ```env
-GOOGLE_API_KEY=your_gemini_api_key
-GEMINI_SMALL_MODEL=gemini-2.5-flash
+OPENROUTER_API_KEY=your_openrouter_api_key
+# Optional attribution headers
+# OPENROUTER_APP_URL=https://yourdomain.com
+# OPENROUTER_APP_NAME=Interview Pro
 ```
 
 ### 3. Restart Development Server

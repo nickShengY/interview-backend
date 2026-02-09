@@ -56,8 +56,8 @@ source .venv311/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 
 # Set environment variable
-set GOOGLE_API_KEY=your_api_key_here  # Windows
-export GOOGLE_API_KEY=your_api_key_here  # Linux/Mac
+set OPENROUTER_API_KEY=your_api_key_here  # Windows
+export OPENROUTER_API_KEY=your_api_key_here  # Linux/Mac
 
 # Start server
 uvicorn main:app --reload --port 8000
@@ -113,9 +113,9 @@ Interactive API documentation (Swagger UI)
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `GOOGLE_API_KEY` | Google Gemini API key | - | ✅ |
-| `GEMINI_EMBED_MODEL` | Embedding model name | `text-embedding-004` | ❌ |
-| `GEMINI_BIG_MODEL` | Large model for cover letters | `gemini-1.5-pro` | ❌ |
+| `OPENROUTER_API_KEY` | OpenRouter API key | - | ✅ |
+| `OPENROUTER_APP_URL` | OpenRouter attribution URL (HTTP-Referer header) | - | ❌ |
+| `OPENROUTER_APP_NAME` | OpenRouter attribution app name (X-Title header) | - | ❌ |
 | `SBERT_API_URL` | Fallback SBERT endpoint | - | ❌ |
 | `ALLOWED_ORIGINS` | CORS origins (comma-separated) | `http://localhost:3000` | ❌ |
 
@@ -211,9 +211,9 @@ curl http://localhost:8000/health
 
 ## Troubleshooting
 
-**Issue**: `GOOGLE_API_KEY not configured`
-- Set environment variable with valid Gemini API key
-- Get key from: https://makersuite.google.com/app/apikey
+**Issue**: `OPENROUTER_API_KEY not configured`
+- Set environment variable with valid OpenRouter API key
+- Get key from: https://openrouter.ai/keys
 
 **Issue**: `Module not found`
 - Activate virtual environment

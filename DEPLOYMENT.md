@@ -74,8 +74,10 @@ npm run db:migrate
 # 2. New Project -> Deploy from GitHub
 # 3. Select repository
 # 4. Add environment variables:
-#    - GOOGLE_API_KEY
+#    - OPENROUTER_API_KEY
 #    - ALLOWED_ORIGINS
+#    - OPENROUTER_APP_URL (optional)
+#    - OPENROUTER_APP_NAME (optional)
 # 5. Settings:
 #    - Root Directory: backend
 #    - Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -139,7 +141,10 @@ NEXTAUTH_URL (use Vercel URL)
 NEXTAUTH_SECRET
 GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET
-GOOGLE_API_KEY
+OPENROUTER_API_KEY
+# Optional attribution headers
+# OPENROUTER_APP_URL
+# OPENROUTER_APP_NAME
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 STRIPE_PRICE_PRO

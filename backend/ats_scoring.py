@@ -22,7 +22,6 @@ from docx import Document  # python-docx
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import os
-import google.generativeai as genai
 
 # ----------------------------------------------------------------------------
 # Text extraction helpers
@@ -196,23 +195,6 @@ def _cosine(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / denom)
 
 
-def _gemini_embed(text: str) -> np.ndarray:
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise RuntimeError("Missing GOOGLE_API_KEY")
-    genai.configure(api_key=api_key)
-    # Use fully-qualified model name to avoid API version/model lookup issues
-    model = os.getenv("GEMINI_EMBED_MODEL", "models/text-embedding-004")
-    # SDK returns dict-like with 'embedding' which often contains 'values'
-    resp = genai.embed_content(model=model, content=text)
-    vec = resp.get("embedding") if isinstance(resp, dict) else getattr(resp, "embedding", None)
-    if isinstance(vec, dict):
-        vec = vec.get("values")
-    if vec is None:
-        raise RuntimeError("No embedding from Gemini")
-    return np.array(vec, dtype=float)
-
-
 def _sbert_embed_pair(resume_txt: str, jd_txt: str) -> Tuple[np.ndarray, np.ndarray]:
     endpoint = os.getenv("SBERT_API_URL")
     if not endpoint:
@@ -227,23 +209,16 @@ def _sbert_embed_pair(resume_txt: str, jd_txt: str) -> Tuple[np.ndarray, np.ndar
 
 
 def semantic_similarity(resume_txt: str, jd_txt: str) -> float:
-    """Compute cosine similarity using Gemini embeddings; fallback to SBERT if available.
+    """Compute cosine similarity using SBERT if configured.
 
-    Returns similarity on 0-100 scale.
+    Returns similarity on 0-100 scale. If SBERT is unavailable, returns 0.
     """
     try:
-        v1 = _gemini_embed(resume_txt)
-        v2 = _gemini_embed(jd_txt)
+        v1, v2 = _sbert_embed_pair(resume_txt, jd_txt)
         sim = _cosine(v1, v2)
         return round(sim * 100, 2)
     except Exception:
-        # Fallback to SBERT if configured
-        try:
-            v1, v2 = _sbert_embed_pair(resume_txt, jd_txt)
-            sim = _cosine(v1, v2)
-            return round(sim * 100, 2)
-        except Exception:
-            return 0.0
+        return 0.0
 
 
 # ----------------------------------------------------------------------------

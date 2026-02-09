@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers"
 import Navigation from "@/components/navigation"
 import { FloatingCredits } from "@/components/floating-credits"
 import DevDemoButton from "@/components/dev-demo"
+import { StructuredData, organizationSchema, websiteSchema } from "@/components/structured-data"
 
 const geistSans = GeistSans
 const geistMono = GeistMono

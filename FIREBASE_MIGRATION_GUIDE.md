@@ -200,8 +200,11 @@ FIREBASE_PROJECT_ID="your-project-id"
 FIREBASE_CLIENT_EMAIL="firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com"
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIE...\n-----END PRIVATE KEY-----"
 
-# Google AI
-GOOGLE_API_KEY="your-gemini-api-key"
+# OpenRouter AI
+OPENROUTER_API_KEY="your-openrouter-api-key"
+# Optional attribution headers
+# OPENROUTER_APP_URL="https://yourdomain.com"
+# OPENROUTER_APP_NAME="Interview Pro"
 
 # Backend API
 NEXT_PUBLIC_ATS_API="http://localhost:8000"

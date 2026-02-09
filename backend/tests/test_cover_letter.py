@@ -19,17 +19,13 @@ client = TestClient(app)
 class TestCoverLetterEndpoint:
     """Test cover letter generation endpoint."""
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-api-key'})
-    def test_generate_cover_letter_success(self, mock_genai):
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-api-key'})
+    def test_generate_cover_letter_success(self, mock_request):
         """Test successful cover letter generation."""
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = json.dumps({
+        mock_request.return_value = {
             "cover_letter": "Dear Hiring Manager,\n\nI am excited to apply for the position..."
-        })
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        }
 
         resume_content = b"John Doe\nSoftware Developer\n5 years experience in Python"
         files = {"resume": ("resume.txt", io.BytesIO(resume_content), "text/plain")}
@@ -39,13 +35,13 @@ class TestCoverLetterEndpoint:
         # May fail without actual API, but validates endpoint exists
         assert response.status_code in [200, 500]
 
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': ''}, clear=False)
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': ''}, clear=False)
     def test_generate_cover_letter_no_api_key(self):
         """Test error when API key is missing."""
         # Clear the env var
         import os
-        original = os.environ.get('GOOGLE_API_KEY')
-        os.environ.pop('GOOGLE_API_KEY', None)
+        original = os.environ.get('OPENROUTER_API_KEY')
+        os.environ.pop('OPENROUTER_API_KEY', None)
 
         try:
             resume_content = b"Resume content"
@@ -57,7 +53,7 @@ class TestCoverLetterEndpoint:
             assert "API key" in response.json()["detail"]
         finally:
             if original:
-                os.environ['GOOGLE_API_KEY'] = original
+                os.environ['OPENROUTER_API_KEY'] = original
 
     def test_generate_cover_letter_missing_resume(self):
         """Test error when resume is missing."""
@@ -72,18 +68,13 @@ class TestCoverLetterEndpoint:
         response = client.post("/cover-letter", files=files)
         assert response.status_code == 422
 
-    @patch('backend.cover_letter.genai')
+    @patch('backend.cover_letter._request_openrouter')
     @patch('backend.cover_letter.extract_text')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_cover_letter_uses_resume_text(self, mock_extract, mock_genai):
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_cover_letter_uses_resume_text(self, mock_extract, mock_request):
         """Test that resume text is extracted and used."""
         mock_extract.return_value = "Extracted resume content with Python skills"
-        
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = '{"cover_letter": "Generated cover letter"}'
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": "Generated cover letter"}
 
         resume_content = b"Resume bytes"
         files = {"resume": ("resume.pdf", io.BytesIO(resume_content), "application/pdf")}
@@ -94,15 +85,11 @@ class TestCoverLetterEndpoint:
         if response.status_code == 200:
             mock_extract.assert_called_once()
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_cover_letter_handles_non_json_response(self, mock_genai):
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_cover_letter_handles_non_json_response(self, mock_request):
         """Test fallback when model returns non-JSON."""
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = "Plain text cover letter without JSON formatting"
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": "Plain text cover letter without JSON formatting"}
 
         resume_content = b"Resume content"
         files = {"resume": ("resume.txt", io.BytesIO(resume_content), "text/plain")}
@@ -117,14 +104,10 @@ class TestCoverLetterEndpoint:
 class TestCoverLetterFormats:
     """Test cover letter generation with different file formats."""
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_pdf_resume(self, mock_genai):
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = '{"cover_letter": "Test"}'
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_pdf_resume(self, mock_request):
+        mock_request.return_value = {"cover_letter": "Test"}
 
         pdf_content = b"%PDF-1.4 resume content"
         files = {"resume": ("resume.pdf", io.BytesIO(pdf_content), "application/pdf")}
@@ -133,18 +116,14 @@ class TestCoverLetterFormats:
         response = client.post("/cover-letter", files=files, data=data)
         assert response.status_code in [200, 500]
 
-    @patch('backend.cover_letter.genai')
+    @patch('backend.cover_letter._request_openrouter')
     @patch('backend.cover_letter.extract_text')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_docx_resume(self, mock_extract, mock_genai):
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_docx_resume(self, mock_extract, mock_request):
         # Mock extract_text to avoid actual docx parsing
         mock_extract.return_value = "Extracted docx resume content"
         
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = '{"cover_letter": "Test"}'
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": "Docx test"}
 
         docx_content = b"PK docx content"
         files = {"resume": ("resume.docx", io.BytesIO(docx_content), 
@@ -158,15 +137,11 @@ class TestCoverLetterFormats:
 class TestCoverLetterEdgeCases:
     """Test edge cases for cover letter generation."""
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_empty_response_text(self, mock_genai):
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_empty_response_text(self, mock_request):
         """Test handling of empty response from AI."""
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = None
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": ""}
 
         resume_content = b"Resume"
         files = {"resume": ("resume.txt", io.BytesIO(resume_content), "text/plain")}
@@ -176,15 +151,11 @@ class TestCoverLetterEdgeCases:
         # Empty response should return 500 or still have cover_letter key
         assert response.status_code in [200, 500]
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_long_job_description(self, mock_genai):
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_long_job_description(self, mock_request):
         """Test with very long job description."""
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = '{"cover_letter": "Generated letter"}'
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": "Long JD cover letter"}
 
         resume_content = b"Resume content"
         files = {"resume": ("resume.txt", io.BytesIO(resume_content), "text/plain")}
@@ -194,15 +165,11 @@ class TestCoverLetterEdgeCases:
         response = client.post("/cover-letter", files=files, data=data)
         assert response.status_code in [200, 500]
 
-    @patch('backend.cover_letter.genai')
-    @patch.dict('os.environ', {'GOOGLE_API_KEY': 'test-key'})
-    def test_unicode_content(self, mock_genai):
+    @patch('backend.cover_letter._request_openrouter')
+    @patch.dict('os.environ', {'OPENROUTER_API_KEY': 'test-key'})
+    def test_unicode_content(self, mock_request):
         """Test with unicode characters in resume and JD."""
-        mock_model = MagicMock()
-        mock_response = MagicMock()
-        mock_response.text = '{"cover_letter": "Cover letter with émojis 🚀"}'
-        mock_model.generate_content.return_value = mock_response
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_request.return_value = {"cover_letter": "Unicode cover letter"}
 
         resume_content = "Développeur Python avec expérience en 日本".encode('utf-8')
         files = {"resume": ("resume.txt", io.BytesIO(resume_content), "text/plain")}

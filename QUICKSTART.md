@@ -134,9 +134,9 @@ cd backend
 pip install -r requirements.txt
 ```
 
-**Issue**: GOOGLE_API_KEY not set
+**Issue**: OPENROUTER_API_KEY not set
 - Check `.env` file in project root
-- Get key from: https://makersuite.google.com/app/apikey
+- Get key from: https://openrouter.ai/keys
 
 ### Frontend Can't Connect to Backend
 
@@ -173,9 +173,9 @@ pip install -r requirements.txt
 - **Stop Words Filtering**: Ignores common words like "the", "and"
 
 ### AI Semantic Understanding
-- **Transformer Embeddings**: 768-dimensional semantic vectors
+- **Transformer Embeddings**: 768-dimensional semantic vectors (via optional SBERT)
 - **Contextual Matching**: Understands "developed" ≈ "built" ≈ "created"
-- **Google Gemini**: State-of-the-art language model
+- **OpenRouter**: Structured-output LLM routing for AI features
 
 ### Quality Analysis
 - **Regex Pattern Matching**: Sophisticated text analysis

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireCredits } from '@/lib/requireCredits'
-import { GoogleGenAI } from '@google/genai'
-import type { GenerateContentConfig } from '@google/genai'
+import { generateStructuredOutput } from '@/lib/llm/openrouter'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import { extractTextFromFile } from '@/lib/ats/parser'
@@ -115,12 +114,9 @@ async function handler(req: NextRequest, userId: string) {
     })
 
     // Generate chapters using AI if API key available
-    const apiKey = process.env.GOOGLE_API_KEY?.trim()
+    const apiKey = process.env.OPENROUTER_API_KEY?.trim()
     if (apiKey && content.length > 100) {
       try {
-        const ai = new GoogleGenAI({ apiKey })
-        const model = process.env.GEMINI_SMALL_MODEL || 'gemini-2.5-flash-lite'
-        
         const chapterSchema = z.object({
           chapters: z.array(z.object({
             title: z.string(),
@@ -136,18 +132,10 @@ ${content.substring(0, 3000)}
 
 Return JSON in this format: {"chapters": [{"title": "...", "summary": "...", "keyPoints": ["...", "..."]}]}`
 
-        const configWithSchema = {
-          responseMimeType: 'application/json',
-          responseJsonSchema: zodToJsonSchema(chapterSchema),
-        } satisfies Record<string, unknown>
-
-        const response = await ai.models.generateContent({
-          model,
-          contents: prompt,
-          config: configWithSchema as unknown as GenerateContentConfig,
+        const parsed = await generateStructuredOutput<z.infer<typeof chapterSchema>>({
+          prompt,
+          schema: zodToJsonSchema(chapterSchema) as Record<string, unknown>,
         })
-
-        const parsed = JSON.parse(response.text ?? '{"chapters":[]}')
         const chapters = parsed.chapters || []
 
         // Create chapters

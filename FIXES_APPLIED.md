@@ -144,8 +144,11 @@ STRIPE_WEBHOOK_SECRET="whsec_..."
 STRIPE_PRICE_PRO="price_..."
 STRIPE_PRICE_ULTRA="price_..."
 
-# Google AI (Gemini)
-GOOGLE_API_KEY="..."
+# OpenRouter AI
+OPENROUTER_API_KEY="..."
+# Optional attribution headers
+# OPENROUTER_APP_URL="https://yourdomain.com"
+# OPENROUTER_APP_NAME="Interview Pro"
 
 # Backend API
 NEXT_PUBLIC_ATS_API="http://localhost:8000"

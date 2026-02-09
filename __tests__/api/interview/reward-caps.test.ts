@@ -18,26 +18,23 @@ jest.mock('@/lib/credits', () => ({
   refundCredits: jest.fn(),
 }))
 
-jest.mock('@google/genai', () => ({
-  GoogleGenAI: jest.fn().mockImplementation(() => ({
-    models: {
-      generateContent: jest.fn().mockResolvedValue({
-        text: JSON.stringify({
-          verdict: 'correct',
-          solution: {
-            idealAnswer: 'Test answer',
-            keyPoints: ['Point 1'],
-            improvementTips: ['Tip 1'],
-          },
-        }),
-      }),
-    },
-  })),
+const mockGenerateStructuredOutput = jest.fn().mockResolvedValue({
+  verdict: 'correct',
+  solution: {
+    idealAnswer: 'Test answer',
+    keyPoints: ['Point 1'],
+    improvementTips: ['Tip 1'],
+  },
+})
+
+jest.mock('@/lib/llm/openrouter', () => ({
+  generateStructuredOutput: (...args: unknown[]) => mockGenerateStructuredOutput(...args),
 }))
 
 import { POST } from '@/app/api/interview/evaluate/route'
 import { resolveUserId } from '@/lib/firebase/auth-utils'
 import { ensureCredits } from '@/lib/credits'
+import { NextRequest } from 'next/server'
 
 const MICRO_REWARD = 5
 const JACKPOT_REWARD = 100
@@ -45,7 +42,7 @@ const DAILY_MICRO_REWARD_CAP = 25
 const JACKPOT_COOLDOWN_DAYS = 7
 
 const createRequest = (body: object) => {
-  return new Request('http://localhost/api/interview/evaluate', {
+  return new NextRequest('http://localhost/api/interview/evaluate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -55,7 +52,7 @@ const createRequest = (body: object) => {
 describe('Reward Caps & Cooldowns', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    process.env.GOOGLE_API_KEY = 'test-key'
+    process.env.OPENROUTER_API_KEY = 'test-key'
   })
 
   describe('Daily Micro-Reward Cap (25 credits/day)', () => {
