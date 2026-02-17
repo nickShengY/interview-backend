@@ -37,3 +37,4 @@ data/
 !backend/cover_letter.py
 !backend/__init__.py
 !api/index.py
+!api/main.py
