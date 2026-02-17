@@ -23,8 +23,14 @@ from slowapi.errors import RateLimitExceeded
 import os
 from dotenv import load_dotenv
 import logging
-from backend.ats_scoring import run_ats_scan, extract_text_with_pages
-from backend.cover_letter import router as cover_router
+
+try:
+    from backend.ats_scoring import run_ats_scan, extract_text_with_pages
+    from backend.cover_letter import router as cover_router
+except ModuleNotFoundError:
+    # Supports environments where this file is executed from inside /backend (e.g. Vercel root dir = backend)
+    from ats_scoring import run_ats_scan, extract_text_with_pages
+    from cover_letter import router as cover_router
 
 # Configure logging
 logging.basicConfig(

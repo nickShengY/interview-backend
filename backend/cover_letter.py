@@ -8,7 +8,11 @@ import requests
 from fastapi import APIRouter, File, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
-from backend.ats_scoring import extract_text
+try:
+    from backend.ats_scoring import extract_text
+except ModuleNotFoundError:
+    # Supports environments where this file is executed from inside /backend (e.g. Vercel root dir = backend)
+    from ats_scoring import extract_text
 
 router = APIRouter()
 
