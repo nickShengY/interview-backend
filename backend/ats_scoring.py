@@ -9,18 +9,16 @@ Handles:
 from __future__ import annotations
 
 import io
+import math
 import re
 import string
 import uuid
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import numpy as np
 import pdfplumber
 import requests
 from docx import Document  # python-docx
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 # ----------------------------------------------------------------------------
@@ -59,6 +57,12 @@ def _clean_text(text: str) -> str:
     text = text.translate(str.maketrans("", "", string.punctuation))
     text = re.sub(r"\s+", " ", text)
     return text.strip()
+
+
+def _tokenize(text: str) -> List[str]:
+    clean = _clean_text(text)
+    tokens = re.findall(r"[a-z0-9]+", clean)
+    return [token for token in tokens if token and token not in STOPWORDS]
 
 
 def _estimate_pages_from_text(text: str) -> int:
@@ -140,18 +144,49 @@ def compute_keyword_score(resume_txt: str, jd_txt: str) -> Tuple[float, List[str
     if not clean_resume or not clean_jd:
         return 0.0, [], []
 
-    vectorizer = TfidfVectorizer(stop_words="english")
-    try:
-        tfidf = vectorizer.fit_transform([clean_jd, clean_resume])
-        sim = cosine_similarity(tfidf[0:1], tfidf[1:2])[0][0]
-        tfidf_score = sim * 100
-    except ValueError:
-        tfidf_score = 0.0
+    jd_tokens = _tokenize(clean_jd)
+    resume_tokens = _tokenize(clean_resume)
+
+    if not jd_tokens or not resume_tokens:
+        return 0.0, [], []
+
+    doc_count = 2
+    vocab = set(jd_tokens) | set(resume_tokens)
+    doc_freq: Dict[str, int] = {}
+    for token in vocab:
+        in_jd = token in jd_tokens
+        in_resume = token in resume_tokens
+        doc_freq[token] = int(in_jd) + int(in_resume)
+
+    jd_tf: Dict[str, float] = {}
+    resume_tf: Dict[str, float] = {}
+    for token in jd_tokens:
+        jd_tf[token] = jd_tf.get(token, 0.0) + 1.0
+    for token in resume_tokens:
+        resume_tf[token] = resume_tf.get(token, 0.0) + 1.0
+
+    jd_len = float(len(jd_tokens))
+    resume_len = float(len(resume_tokens))
+
+    jd_vec: Dict[str, float] = {}
+    resume_vec: Dict[str, float] = {}
+
+    for token in vocab:
+        idf = math.log((doc_count + 1.0) / (doc_freq[token] + 1.0)) + 1.0
+        jd_vec[token] = (jd_tf.get(token, 0.0) / jd_len) * idf
+        resume_vec[token] = (resume_tf.get(token, 0.0) / resume_len) * idf
+
+    dot = sum(jd_vec[token] * resume_vec[token] for token in vocab)
+    jd_norm = math.sqrt(sum(value * value for value in jd_vec.values()))
+    resume_norm = math.sqrt(sum(value * value for value in resume_vec.values()))
+    sim = dot / (jd_norm * resume_norm) if jd_norm and resume_norm else 0.0
+    tfidf_score = sim * 100
 
     # Top JD keywords
-    jd_tokens = [w for w in clean_jd.split() if w not in STOPWORDS]
     jd_freq: Dict[str, int] = {}
     for w in jd_tokens:
+        if len(w) < 2:
+            continue
         jd_freq[w] = jd_freq.get(w, 0) + 1
     sorted_kw = sorted(jd_freq.items(), key=lambda x: x[1], reverse=True)
     top_keywords = [kw for kw, _ in sorted_kw[:30]]
@@ -188,14 +223,26 @@ def formatting_penalty(resume_txt: str) -> int:
 # ----------------------------------------------------------------------------
 
 
-def _cosine(a: np.ndarray, b: np.ndarray) -> float:
-    denom = (np.linalg.norm(a) * np.linalg.norm(b))
+def _cosine(a: List[float], b: List[float]) -> float:
+    if not a or not b:
+        return 0.0
+    length = min(len(a), len(b))
+    dot = 0.0
+    norm_a = 0.0
+    norm_b = 0.0
+    for i in range(length):
+        av = float(a[i])
+        bv = float(b[i])
+        dot += av * bv
+        norm_a += av * av
+        norm_b += bv * bv
+    denom = math.sqrt(norm_a) * math.sqrt(norm_b)
     if denom == 0:
         return 0.0
-    return float(np.dot(a, b) / denom)
+    return float(dot / denom)
 
 
-def _sbert_embed_pair(resume_txt: str, jd_txt: str) -> Tuple[np.ndarray, np.ndarray]:
+def _sbert_embed_pair(resume_txt: str, jd_txt: str) -> Tuple[List[float], List[float]]:
     endpoint = os.getenv("SBERT_API_URL")
     if not endpoint:
         raise RuntimeError("SBERT endpoint not configured")
@@ -205,7 +252,7 @@ def _sbert_embed_pair(resume_txt: str, jd_txt: str) -> Tuple[np.ndarray, np.ndar
     embeddings = resp.json().get("embeddings", [])
     if len(embeddings) != 2:
         raise ValueError("Unexpected embedding count from SBERT service")
-    return np.array(embeddings[0], dtype=float), np.array(embeddings[1], dtype=float)
+    return [float(value) for value in embeddings[0]], [float(value) for value in embeddings[1]]
 
 
 def semantic_similarity(resume_txt: str, jd_txt: str) -> float:
