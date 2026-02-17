@@ -1,7 +1,10 @@
 # Large local environments / caches
 .git
 **/.venv*/
+backend/.venv311/
+backend/.venv*/
 **/__pycache__/
+**/.pytest_cache/
 node_modules/
 .next/
 coverage/
