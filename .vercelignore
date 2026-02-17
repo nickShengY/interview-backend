@@ -1,0 +1,39 @@
+# Large local environments / caches
+.git
+**/.venv*/
+**/__pycache__/
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+
+# Frontend/source areas not needed by Python backend deployment
+app/
+components/
+hooks/
+lib/
+prisma/
+public/
+styles/
+types/
+__tests__/
+e2e/
+data/
+
+# Misc project docs/files not required at runtime
+.claude/
+.github/
+*.md
+*.ts
+*.tsx
+*.js
+*.jsx
+*.json
+!vercel.json
+!backend/requirements.txt
+!backend/main.py
+!backend/ats_scoring.py
+!backend/cover_letter.py
+!backend/__init__.py
+!api/index.py

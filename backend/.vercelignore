@@ -1,0 +1,12 @@
+# Large local environments / caches
+.git
+.venv*/
+__pycache__/
+tests/
+
+# Not required for runtime
+README.md
+Dockerfile
+start.bat
+pytest.ini
+vercel.json
